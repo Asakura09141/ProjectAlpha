@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputSystemManager : MonoBehaviour, IInputSystem
+public class UniversalInputSystem : MonoBehaviour, IInputSystem
 {
     private GameInput _gameInput;
     private Vector2 _currentMove;
