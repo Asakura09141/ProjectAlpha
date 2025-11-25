@@ -1,9 +1,8 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class PlayerMovement : MonoBehaviour, ICanJump, IMovable
+public class PlayerMovement : MonoBehaviour, ICanJump
 {
-    [SerializeField] private float _speed;
     [SerializeField] private float _jumpForce;
     [SerializeField] private Transform _feetPoint;
     [SerializeField] private LayerMask _groundLayer;
@@ -13,11 +12,6 @@ public class PlayerMovement : MonoBehaviour, ICanJump, IMovable
     private void Awake()
     {
         _rigidbody2D = GetComponent<Rigidbody2D>();
-    }
-
-    public void Move(float direction)
-    {
-        _rigidbody2D.linearVelocity = new Vector2(direction * _speed, _rigidbody2D.linearVelocity.y);
     }
 
     public void Jump()
