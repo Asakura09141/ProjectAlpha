@@ -1,32 +1,40 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
-public class PlayerMovement : MonoBehaviour, ICanJump
+[RequireComponent(typeof(Movement))]
+[RequireComponent(typeof(Jumper))]
+public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private float _jumpForce;
-    [SerializeField] private Transform _feetPoint;
-    [SerializeField] private LayerMask _groundLayer;
-
-    private Rigidbody2D _rigidbody2D;
+    private IMovable _movable;
+    private ICanJump _jumper;
+    private IInputSystem _inputSystem;
 
     private void Awake()
     {
-        _rigidbody2D = GetComponent<Rigidbody2D>();
+        _movable = GetComponent<Movement>();
+        _jumper = GetComponent<Jumper>();
     }
 
-    public void Jump()
+    private void OnDisable()
     {
-        if (IsGrounded() == false)
-        {
-            return;
-        }
-
-        _rigidbody2D.AddForceY(_jumpForce, ForceMode2D.Impulse);
+        _inputSystem.Moving -= OnMoving;
+        _inputSystem.Jumping -= OnJumping;
     }
 
-    public bool IsGrounded()
+    public void SetInput(IInputSystem input)
     {
-        RaycastHit2D hit = Physics2D.Raycast(_feetPoint.position, Vector2.down, 0.1f, _groundLayer);
-        return hit.collider != null;
+        _inputSystem = input;
+
+        _inputSystem.Moving += OnMoving;
+        _inputSystem.Jumping += OnJumping;
+    }
+
+    private void OnJumping()
+    {
+        _jumper.Jump();
+    }
+
+    private void OnMoving(float direction)
+    {
+        _movable.Move(direction);
     }
 }
