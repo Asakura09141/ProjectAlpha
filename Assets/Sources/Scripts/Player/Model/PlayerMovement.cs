@@ -22,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void SetInput(IInputSystem input)
     {
-        _inputSystem = input;
+        _inputSystem = input ?? throw new System.ArgumentNullException(nameof(input));
 
         _inputSystem.Moving += OnMoving;
         _inputSystem.Jumping += OnJumping;

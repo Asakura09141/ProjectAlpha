@@ -16,8 +16,21 @@ public class Player : MonoBehaviour
         _health = GetComponent<Health>();
     }
 
+    private void Start()
+    {
+        float testDamage = 30;
+        TakeDamage(testDamage);
+        TakeDamage(testDamage);
+    }
+
     private void OnEnable()
     {
         _movement.SetInput(_input);
     }
+
+    private void TakeDamage(float damage)
+    {
+        _health.Remove(damage);
+    }
+
 }

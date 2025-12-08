@@ -1,25 +1,23 @@
 using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(Movement))]
+[RequireComponent(typeof(EnemyMovement))]
 [RequireComponent(typeof(Health))]
 public class Enemy : MonoBehaviour
 {
-    private readonly float _stoppingDistance = 1f;
     private readonly float _timeWait = 2f;
 
     [SerializeField] private Transform[] _points;
 
     private int _currentIndex = 0;
     private bool _isPatrolling = true;
-    private bool _isMovingToPoint = false;
-    private Movement _movement;
+
+    private EnemyMovement _movement;
     private Health _health;
-    private Transform _targetPoint;
 
     private void Awake()
     {
-        _movement = GetComponent<Movement>();
+        _movement = GetComponent<EnemyMovement>();
         _health = GetComponent<Health>();
     }
 
@@ -35,35 +33,13 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
-    {
-        if (_isMovingToPoint == false || _targetPoint == null)
-        {
-            return;
-        }
-
-        float distanceSqr = (transform.position - _targetPoint.position).sqrMagnitude;
-
-        if (distanceSqr <= _stoppingDistance * _stoppingDistance)
-        {
-            _movement.StopMove();
-            _isMovingToPoint = false;
-            return;
-        }
-
-        float direction = Mathf.Sign(_targetPoint.position.x - transform.position.x);
-        _movement.Move(direction);
-    }
-
     private IEnumerator Patroling()
     {
         while (_isPatrolling)
         {
-            _targetPoint = _points[_currentIndex];
-            _isMovingToPoint = true;
+            _movement.SetTarget(_points[_currentIndex]);
 
-            while (_isMovingToPoint)
-                yield return null;
+            yield return new WaitUntil(() => _movement.IsTargetReached());
 
             yield return new WaitForSeconds(_timeWait);
 
